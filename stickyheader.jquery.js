@@ -1,9 +1,7 @@
 
 jQuery.fn.extend({
 	stickHeader: function(offset){
-
 		var tables = this;
-
 		this.each(function(i){
 			var table = tables[i];
 			var tableClone = $(table).clone(true).empty().removeClass('stickyHeader');
@@ -36,7 +34,7 @@ jQuery.fn.extend({
 			var cutoffTop = $(table).offset().top;
 			var cutoffBottom = tableHeight + cutoffTop - headerCellHeight;
 
-			$(window).scroll(function() { 
+			jQuery.fn.stickHeader.windowScroll = function() {
 				var currentPosition = $(window).scrollTop();
 				if (currentPosition > cutoffTop && currentPosition < cutoffBottom) {
 					stickyHeader.removeClass('hide');
@@ -44,13 +42,19 @@ jQuery.fn.extend({
 						stickyHeader.css('top', currentPosition + 'px');
 					}
 					if (offset){
-						stickyHeader.css('top', offset + 'px')
+						stickyHeader.css('top', offset + 'px');
 					}
 				}
 				else {
 					stickyHeader.addClass('hide');
 				}
-			});
+			}
+
+			$(window).on("scroll", jQuery.fn.stickHeader.windowScroll);
+
+			jQuery.fn.stickHeader.unstick = function(){
+				$(window).off("scroll", jQuery.fn.stickHeader.windowScroll)
+			}
 		});
-	}
+}
 });
