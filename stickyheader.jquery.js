@@ -1,18 +1,16 @@
-
 jQuery.fn.extend({
 	stickyHeader: function( options ){
-        var settings = $.extend({
-            mode 	: "stick",
-            offset 	: 0,
-            allowCutOffBottom: false
-        }, options );
-        
-        var tables = this; 
-        var stickyHeader, cutoffTop, cutoffBottom
-        
-        var windowScroll = function(){
+		var settings = $.extend({
+			mode	: "stick",
+			offset	: 0,
+			allowCutOffBottom: false
+		}, options );
+		
+		var tables = this;
+		var stickyHeader, cutoffTop, cutoffBottom;
+		
+		var windowScroll = function(){
 			var currentPosition = $(window).scrollTop();
-
 			if ( currentPosition > cutoffTop && currentPosition < cutoffBottom ) {
 				stickyHeader.removeClass('hide');
 				stickyHeader.css('top', settings.offset + 'px');
@@ -20,10 +18,14 @@ jQuery.fn.extend({
 			else {
 				stickyHeader.addClass('hide');
 			}
-        };
+		};
+		
+		var divScroll = function(){
+			stickyHeader.css( 'left', tables.offset().left );
+		};
 
-        if (settings.mode == "stick") {
-        	return tables.each(function(i){
+		if (settings.mode == "stick") {
+			return tables.each(function(i){
 				var table = tables[i];
 				var tableClone = $(table).clone(true).empty().removeClass('stickyHeader');
 				var theadClone = $(table).find('thead').clone(true);
@@ -52,24 +54,31 @@ jQuery.fn.extend({
 
 				$(window).on( "scroll", windowScroll );
 
+				if ( ($(table).parent().css("overflow-x") == "auto") || ( $(table).parent().css("overflow-x") == "scroll") ){
+					$(table).parent().on( "scroll", divScroll );
+				}
 
-        	});
-        }
 
-        else if (settings.mode == "unstick"){
-        	return tables.each(function(i){
-        		$('div.stickyHeader').remove()
-				$(window).off( "scroll", windowScroll );
-        	});        	
-        }
+			});
+		}
 
-        else if (settings.mode == "restick"){
-        	return tables.each(function(i){
-        		$('div.stickyHeader').remove()
-        		$(window).off( "scroll", windowScroll );
-        		tables.stickyHeader({ mode: "stick", offset: settings.offset, allowCutOffBottom: settings.allowCutOffBottom }).scroll()
-        	});
-        }
+		else if (settings.mode == "unstick"){
+			$('div.stickyHeader').remove();
+			$(window).off( "scroll", windowScroll );
+			
+			return tables.each(function(i){
+				var table = tables[i];
+				$(table).parent().off( "scroll", divScroll );
+			});
+		}
+
+		else if (settings.mode == "restick"){
+			return tables.each(function(i){
+				var $table = $(tables[i]);
+				$table.stickyHeader({ mode: "unstick" } );
+				$table.stickyHeader({ mode: "stick", offset: settings.offset, allowCutOffBottom: settings.allowCutOffBottom }).scroll();
+			});
+		}
 
 
 	}
