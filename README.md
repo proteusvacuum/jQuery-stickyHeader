@@ -37,7 +37,7 @@ To get started just include:
 - With an offset (e.g. if you have something else stuck to your screen):
 
 ```js 
-    $('table.sticky').stickyHeader( { offset: "25px" } ) 
+    $('table.sticky').stickyHeader( { offset: 25 } )  //value in px
 ```
 
 ### Unstick it.
