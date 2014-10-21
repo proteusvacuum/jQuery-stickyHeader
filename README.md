@@ -62,7 +62,7 @@ var restickHeader =  $table.stickyHeader( { mode: "restick", offset: $nav.height
 var lazyRestick = _.debounce( restickHeader, 500 );
 
 $(window).on("resize", function(){
-    if ( table_width == $table.width() ){
+    if ( table_width !== $table.width() ){
         lazyRestick();
     }
 });
